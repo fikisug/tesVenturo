@@ -32,7 +32,7 @@
                         <div class="col-2">
                             <div class="form-group">
                                 <select id="my-select" class="form-control" name="tahun">
-                                    <option value="" selected>Pilih Tahun</option>
+                                    <option value="">Pilih Tahun</option>
                                     <option value="2021">2021</option>
                                     <option value="2022">2022</option>
                                 </select>
