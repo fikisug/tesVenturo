@@ -100,7 +100,8 @@
                                     <td class="text-center">Total</td>
                                     @foreach($totalPerBulan as $total)
                                     <td style="text-align: right;">
-                                        {{ number_format($total, 0, ',' , ',') }}
+                                        {{ $total != 0 ? number_format($total, 0, ',', ',') : '' }}
+                                        {{-- {{ number_format($total, 0, ',' , ',') }} --}}
                                     </td>
                                     @endforeach
                                     <td style="text-align: right; font-weight: bold;">{{ number_format($subTotal, 0, ',' , ',') }}</td>
