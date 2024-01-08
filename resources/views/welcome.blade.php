@@ -32,24 +32,9 @@
                         <div class="col-2">
                             <div class="form-group">
                                 <select id="my-select" class="form-control" name="tahun">
-
-                                    @if (!isset($_GET['tahun']))
-                                        <option value="" selected>Pilih Tahun</option>
-                                        <option value="2021">2021</option>
-                                        <option value="2022">2022</option>
-                                    @elseif(isset($_GET['tahun']) == "2021")
-                                        <option value="">Pilih Tahun</option>
-                                        <option value="2021" selected>2021</option>
-                                        <option value="2022">2022</option>
-                                    @elseif(isset($_GET['tahun']) == "2022")
-                                        <option value="">Pilih Tahun</option>
-                                        <option value="2021">2021</option>
-                                        <option value="2022" selected>2022</option>
-                                    @elseif(isset($_GET['tahun']) == "")
-                                        <option value="" selected>Pilih Tahun</option>
-                                        <option value="2021">2021</option>
-                                        <option value="2022">2022</option>
-                                    @endif
+                                    <option value="" selected>Pilih Tahun</option>
+                                    <option value="2021">2021</option>
+                                    <option value="2022">2022</option>
                                 </select>
                             </div>
                         </div>
@@ -61,7 +46,7 @@
                     </div>
                 </form>
                 <hr>
-                <div class="table-responsive">
+                <div class="table-responsive" id="tabelku">
                     <table class="table table-hover table-bordered" style="margin: 0;">
                         <thead>
                             <tr class="table-dark">
@@ -91,7 +76,7 @@
                                         <td>{{ $value["makanan"] }}</td>
                                         @foreach($totalMenuPerBulan[$value["makanan"]] as $menu)
                                             <td style="text-align: right;">
-                                                {{$menu["total"]}}
+                                                {{ $menu["total"] != 0 ? number_format($menu["total"], 0, ',', ',') : '' }}
                                             </td>
                                         @endforeach
                                         <td style="text-align: right; font-weight: bold;">{{ number_format($totalMenuPerTahun[$value["makanan"]]["subtotal"], 0, ',' , ',') }}</td>
@@ -105,7 +90,7 @@
                                     <td>{{ $value["minuman"] }}</td>
                                     @foreach($totalMenuPerBulan[$value["minuman"]] as $menu)
                                         <td style="text-align: right;">
-                                            {{ number_format($menu["total"], 0, ',' , ',') }}
+                                            {{ $menu["total"] != 0 ? number_format($menu["total"], 0, ',', ',') : '' }}
                                         </td>
                                     @endforeach
                                     <td style="text-align: right; font-weight: bold;">{{ number_format($totalMenuPerTahun[$value["minuman"]]["subtotal"], 0, ',' , ',') }}</td>
@@ -133,6 +118,22 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        $(document).ready(function() {
+    // Mengecek apakah ada parameter tahun pada URL
+    var tahunParameter = new URLSearchParams(window.location.search).get('tahun');
+
+    // Mengatur nilai awal berdasarkan parameter tahun atau default
+    if (tahunParameter === "2021") {
+        $('#my-select').val('2021');
+    } else if (tahunParameter === "2022") {
+        $('#my-select').val('2022');
+    } else{
+        $('#tabelku').hide();
+    }
+});
+    </script>
 </body>
 
 </html>

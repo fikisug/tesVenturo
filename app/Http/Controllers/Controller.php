@@ -17,9 +17,9 @@ class Controller extends BaseController
         $tahun = $request["tahun"];
         $makanan = array();
         $minuman = array();
-        $arrTotalMenuPerTahun = array();
-        $arrTotalPerBulan = array();
-        $arrTotalMenuPerBulan = array();
+        $TotalMenuPerTahun = array();
+        $TotalPerBulan = array();
+        $TotalMenuPerBulan = array();
         $subTotal = 0;
         
         $bulan = [
@@ -110,26 +110,26 @@ class Controller extends BaseController
                             $totalMenuPerBulan = $totalMenuPerBulan + $t["total"];
                         }
                         
-                        $arrTotalPerBulan[$b["bulan"]] = $totalPerBulan;
+                        $TotalPerBulan[$b["bulan"]] = $totalPerBulan;
                     }
-                    $arrTotalMenuPerBulan[$menu["menu"]][]["total"] = $totalMenuPerBulan;
+                    $TotalMenuPerBulan[$menu["menu"]][]["total"] = $totalMenuPerBulan;
                 }                
-                $arrTotalMenuPerTahun[$menu['menu']]["subtotal"] = $totalPerMenu;
+                $TotalMenuPerTahun[$menu['menu']]["subtotal"] = $totalPerMenu;
             }
-            foreach($arrTotalPerBulan as $totalPerBulan) {
+            foreach($TotalPerBulan as $totalPerBulan) {
                 
                 $subTotal += $totalPerBulan;
             }
         }
-        // dd($arrTotalMenuPerBulan);
+        // dd($TotalMenuPerBulan);
         return view('welcome', [
             "namaBulan" => $bulan,
             "tahun" => $tahun,
             "makanan" => $makanan,
             "minuman" => $minuman,
-            "totalMenuPerBulan" => $arrTotalMenuPerBulan,
-            "totalPerBulan" => $arrTotalPerBulan,
-            "totalMenuPerTahun" => $arrTotalMenuPerTahun,
+            "totalMenuPerBulan" => $TotalMenuPerBulan,
+            "totalPerBulan" => $TotalPerBulan,
+            "totalMenuPerTahun" => $TotalMenuPerTahun,
             "subTotal" => $subTotal,
         ]);
     }
