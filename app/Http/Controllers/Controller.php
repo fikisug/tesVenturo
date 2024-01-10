@@ -21,6 +21,10 @@ class Controller extends BaseController
         $TotalPerBulan = array();
         $TotalMenuPerBulan = array();
         $subTotal = 0;
+        $subTotalMakanan = 0;
+        $subTotalMinuman = 0;
+        $totalKategoriMinuman = array();
+        $totalKategoriMakanan = array();
         
         $bulan = [
             [
@@ -76,7 +80,41 @@ class Controller extends BaseController
         if($tahun != "") {            
             $menu = json_decode(file_get_contents("http://tes-web.landa.id/intermediate/menu"), true);
             $transaksi = json_decode(file_get_contents("http://tes-web.landa.id/intermediate/transaksi?tahun=".$request["tahun"]), true);    
-            
+            // $mergedJson = array_merge($transaksi, $menu);
+
+        // Membuat array baru yang menggabungkan data dari kedua JSON
+        $gabunganArray = [];
+
+        foreach ($transaksi as $transaksii) {
+            foreach ($menu as $menuu) {
+                if ($transaksii['menu'] == $menuu['menu']) {
+                    $gabunganArray[] = array_merge($transaksii, $menuu);
+                    break;
+                }
+            }
+        }
+
+        
+        foreach($bulan as $b) {
+            $totalPerBulanKategoriMkn = 0;
+            $totalPerBulanKategoriMnm = 0;
+
+            foreach($gabunganArray as $item){
+                $timestamps = strtotime($item['tanggal']);
+                $formatbulan = date("m", $timestamps);
+                if($formatbulan == $b['bulan'] && $item['kategori'] == "makanan") {
+                    $totalPerBulanKategoriMkn = $totalPerBulanKategoriMkn + $item["total"];
+                }
+                if($formatbulan == $b['bulan'] && $item['kategori'] == "minuman") {
+                    $totalPerBulanKategoriMnm = $totalPerBulanKategoriMnm + $item["total"];
+                }
+
+                $totalKategoriMakanan[$b["bulan"]][$item['kategori']] = $totalPerBulanKategoriMkn;
+                $totalKategoriMinuman[$b["bulan"]][$item['kategori']] = $totalPerBulanKategoriMnm;
+
+            }
+        }
+
             foreach($menu as $menu) {
                 if($menu["kategori"] == 'makanan') {
                     $makanan[]["makanan"] = $menu["menu"];
@@ -90,6 +128,8 @@ class Controller extends BaseController
                 foreach($bulan as $b) {
 
                     $totalMenuPerBulan = 0;
+                    $totalPerBulanKategoriMkn = 0;
+                    $totalPerBulanKategoriMnm = 0;
                     $totalPerMenu = 0;
                     $totalPerBulan = 0;
 
@@ -101,6 +141,14 @@ class Controller extends BaseController
                         if($formatbulan == $b['bulan']) {
                             $totalPerBulan = $totalPerBulan + $t["total"];
                         }
+                        
+                        // if($formatbulan == $b['bulan'] && $t['menu'] == $menu['menu'] && $menu['kategori'] == "makanan") {
+                        //     $totalPerBulanKategoriMkn = $totalPerBulanKategoriMkn + $t["total"];
+                        // }
+
+                        // if($formatbulan == $b['bulan'] && $menu['kategori'] == "minuman") {
+                        //     $totalPerBulanKategoriMnm = $totalPerBulanKategoriMnm + $t["total"];
+                        // }
 
                         if($menu["menu"] == $t["menu"]) {
                             $totalPerMenu = $totalPerMenu + $t["total"];
@@ -111,7 +159,11 @@ class Controller extends BaseController
                         }
                         
                         $TotalPerBulan[$b["bulan"]] = $totalPerBulan;
+                        
+                        // $totalPerBulanKategoriMakanan[$b["bulan"]][$menu['kategori']] = $totalPerBulanKategoriMkn;
+                        // $totalPerBulanKategoriMinuman[$b["bulan"]][$menu['kategori']] = $totalPerBulanKategoriMnm;
                     }
+                    
                     $TotalMenuPerBulan[$menu["menu"]][]["total"] = $totalMenuPerBulan;
                 }                
                 $TotalMenuPerTahun[$menu['menu']]["subtotal"] = $totalPerMenu;
@@ -120,8 +172,18 @@ class Controller extends BaseController
                 
                 $subTotal += $totalPerBulan;
             }
+
+            foreach($totalKategoriMakanan as $m){
+                $subTotalMakanan += $m['makanan'];
+            }
+
+            foreach($totalKategoriMinuman as $m){
+                $subTotalMinuman += $m['minuman'];
+            }
+
+            // dd($gabunganArray);
         }
-        // dd($TotalMenuPerBulan);
+        // dd($totalPerBulanKategoriMinuman);
         return view('welcome', [
             "namaBulan" => $bulan,
             "tahun" => $tahun,
@@ -131,6 +193,10 @@ class Controller extends BaseController
             "totalPerBulan" => $TotalPerBulan,
             "totalMenuPerTahun" => $TotalMenuPerTahun,
             "subTotal" => $subTotal,
+            "subTotalMakanan" => $subTotalMakanan,
+            "subTotalMinuman" => $subTotalMinuman,
+            "totalPerBulanKategoriMakanan" => $totalKategoriMakanan,
+            "totalPerBulanKategoriMinuman" => $totalKategoriMinuman,
         ]);
     }
 }

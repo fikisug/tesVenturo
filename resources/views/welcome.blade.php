@@ -69,7 +69,11 @@
                             <!-- jika data ditemukan atau terdapat tahun yang dipilih dan tahun tidak kosong -->
                             @if (isset($_GET['tahun']) != "")
                                 <tr>
-                                    <td class="table-secondary" colspan="14"><b>Makanan</b></td>
+                                    <td class="table-secondary" colspan=""><b>Makanan</b></td>
+                                    @foreach ($totalPerBulanKategoriMakanan as $item)
+                                        <td align="right">{{ $item["makanan"] != 0 ? number_format($item["makanan"], 0, ',', ',') : '' }}</td>
+                                    @endforeach
+                                    <td align="right">{{ $subTotalMakanan != 0 ? number_format($subTotalMakanan, 0, ',', ',') : '' }}</td>
                                 </tr>
                                 @foreach($makanan as $value)
                                     <tr>
@@ -83,7 +87,11 @@
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td class="table-secondary" colspan="14"><b>Minuman</b></td>
+                                    <td class="table-secondary"><b>Minuman</b></td>
+                                    @foreach ($totalPerBulanKategoriMinuman as $item)
+                                    <td align="right">{{ $item["minuman"] != 0 ? number_format($item["minuman"], 0, ',', ',') : '' }}</td>
+                                    @endforeach
+                                    <td align="right">{{ $subTotalMinuman != 0 ? number_format($subTotalMinuman, 0, ',', ',') : '' }}</td>
                                 </tr>
                                 @foreach($minuman as $value)
                                 <tr>
